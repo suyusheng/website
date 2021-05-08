@@ -1,0 +1,177 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+}
+html{
+    font-size: calc(100vw/7.5);
+}
+ul,li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+}
+#main_box{
+    width: 100%;
+    height: 100%;
+}
+header{
+    width: 100%;
+    height: 3.55rem;
+    background: url('../images/banner.png') no-repeat;
+    background-size: 100% 100%;
+    padding: .42rem .2rem 0rem .46rem;
+}
+.banner{
+    width: 100%;
+}
+.banner dl{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.banner dl dt{
+    width: 2.2rem;
+}
+.banner dl dt img{
+    width: 2.28rem;
+    border-radius: 0.08rem;
+    height: 1.71rem;
+}
+.banner dl dd{
+    flex: 1;
+    padding-left: .35rem;
+}
+.banner dl dd h3{
+    font-size: .32rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    padding-bottom: .24rem;
+}
+.banner dl dd p{
+    width: 100%;
+    height: .47rem;
+    line-height: .47rem;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: .24rem;
+}
+.banner dl dd p img{
+    width: .25rem;
+    height: .25rem;
+    margin-top: 0.05rem;
+}
+.banner dl dd p span{
+    display: inline-block;
+    flex:1;
+    font-size: .24rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    line-height: .33rem;
+    padding-left: .22rem;
+}
+.section{
+    width: 100%;
+    height: auto;
+    padding: .5rem .35rem;
+}
+.section h3{
+    font-size: .32rem;
+    font-family: PingFangSC-Medium,PingFang SC;
+    font-weight: 500;
+    color:rgba(25,25,25,1);
+    line-height: .45rem;
+}
+.school_brief{
+    width: 100%;
+    height: auto;
+} 
+.school_brief h3{
+    width: 100%;
+    height: .45rem;
+    line-height: .45rem;
+    background: url('../images/Group\ 16.png') no-repeat;
+    background-size: .35rem;
+    padding-left: .55rem;
+}
+.surroun_environment{
+    width: 100%;
+    height: auto;
+} 
+.surroun_environment h3{
+    width: 100%;
+    height: .45rem;
+    line-height: .45rem;
+    background: url('../images/Group\ 15.png') no-repeat;
+    background-size: .35rem;
+    padding-left: .55rem;
+    background-position: 0% 50%;
+}
+.school_environment{
+    width: 100%;
+    height: auto;
+}
+.school_environment h3{
+    width: 100%;
+    height: .45rem;
+    line-height: .45rem;
+    background: url('../images/Group\ 14.png') no-repeat;
+    background-size: .35rem;
+    padding-left: .55rem;   
+    background-position: 0% 50%;
+}
+.traffic_routes{
+    width: 100%;
+    height: auto;
+}
+.traffic_routes h3{
+    width: 100%;
+    height: .45rem;
+    line-height: .45rem;
+    background: url('../images/Group\ 13.png') no-repeat;
+    background-size: .35rem;
+    padding-left: .55rem;   
+    background-position: 0% 50%;
+}
+.section p{
+    font-size: .26rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+    line-height: .4rem;
+    padding-top: .2rem;
+    padding-bottom: .5rem;
+}
+#dituContent{
+    width: 100%;
+    height: 3.49rem;
+    margin-top: .1rem;
+}
+.school_environment .content{
+    width: 100%;
+}
+.content .swiper-wrapper{
+    width: 100%;
+}
+.swiper-container{
+    width: 100%;
+}
+.swiper-wrapper{
+    width: 100%;
+    height: auto;
+}
+.swiper-slide{
+    width: 80%!important;
+    margin-right: .14rem;
+}
+.swiper-slide img{
+    width: 100%;
+}

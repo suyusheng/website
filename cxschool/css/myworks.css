@@ -1,0 +1,174 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+img{
+    font-size: .24rem;
+}
+html{
+    font-size: calc(100vw/7.5);
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    background: #FDAC1C;
+}
+#main{
+    width: 100%;
+    height: auto;
+}
+#main header{
+    width: 100%;
+    height: 1.46rem;
+    padding-top: .39rem;
+}
+#main header ul{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    padding: 0 1rem;
+}
+#main header ul li{
+    width: 50%;
+    line-height: .42rem;
+    list-style-type: none;
+    position: relative;
+}
+#main header ul li img{
+    width: .32rem;
+    height: .32rem;
+}
+#main header ul li:first-child img{
+    position: absolute;
+    top: 50%;
+    margin-top: -.1rem;
+    left: .3rem;
+}
+#main header ul li:last-child img{
+    position: absolute;
+    top: 50%;
+    margin-top: -.1rem;
+    left: .15rem;
+}
+#main header ul li b{
+    display: block;
+    width: .6rem;
+    height: .1rem;
+    background: #ffffff;
+    border-radius: 0.05rem;
+    margin: 0 auto;
+    margin-top: .1rem;
+}
+#main header ul li span{
+    display: inline-block;
+    /* width: 1.5rem; */
+    font-size: .3rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+}
+#main header ul li span.active{
+    font-size: .36rem;
+    font-family:PingFangSC-Semibold,PingFang SC;
+    font-weight:600;
+    color:rgba(255,255,255,1);
+}
+.section{
+    width: 100%;
+    height: auto;
+    padding: 0rem .25rem;
+    margin-top: .39rem;
+}
+.video_resultCont{
+    width: 100%;
+    height: auto;
+}
+.video_resultCont .video_content{
+    width: 100%;
+    height: auto;
+    padding: .27rem .26rem 1.15rem .27rem;
+    background:rgba(255,255,255,1);
+    border-radius: .24rem;
+    margin-bottom: .26rem;
+}
+.video_resultCont .video_content .video{
+    width: 100%;
+    height: 4.86rem;
+    position: relative;
+}
+.video_resultCont .video_content .video .videoPlay{
+    width: 100%;
+    height: 4.86rem;
+    border-radius: .12rem;
+}
+.video_resultCont .video_content .video img{
+    position: absolute;
+    width: 1.26rem;
+    height: 1.26rem;
+    top: 50%;
+    margin-top: -.63rem;
+    left: 50%;
+    margin-left: -.63rem;
+}
+.video_resultCont .video_content .desc_cont{
+    width: 100%;
+    margin-top: .5rem;
+}
+.desc_cont h3{
+    font-size: .32rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(51,51,51,1);
+}
+.desc_cont p{
+    font-size: .26rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(88,88,88,1);
+    line-height: .46rem;
+    padding-top: .19rem;
+}
+
+
+/* 已发布程序 */
+.public_programCont{
+    width: 100%;
+    height: auto;
+    display: none;
+}
+.programCont{
+    width: 100%;
+    height: auto;
+    background:rgba(255,255,255,1);
+    border-radius: .24rem;
+    padding: .49rem .42rem .3rem .43rem;
+    margin-bottom: .23rem;
+}
+.programCont dl{
+    width: 100%;
+    display: flex;
+}
+.programCont dl dt img{
+    width: 2.33rem;
+    height: 2.33rem;
+}
+.programCont dl dd{
+    padding-left: .23rem;
+}
+.programCont dl dd h3{
+    font-size: .32rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(50,50,50,1);
+    line-height: .45rem;
+    padding-top: 0.06rem;
+}
+.programCont dl dd p{
+    font-size: .26rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(88,88,88,1);
+    line-height: .4rem;
+    padding-top: .15rem;
+}

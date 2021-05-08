@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/codeDetail.css">
+    <script src="https://cdn1.geek-8.com/lib/jquery-3.3.1.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <title>已发布程序详情</title>
+</head>
+<body>
+   <div id="main">
+       <header id="header">
+            <img src="./images/zanImg.png" alt="点赞征集令" id="zan">
+            <dl>
+                <dt>
+                    <img src="./images/touxiang.png" alt="头像">
+                </dt>
+                <dd>
+                    <p>易烊千玺</p>
+                    <!-- <p>2020-04-3 11:24</p> -->
+                </dd>
+            </dl>
+       </header>
+       <section id="section">
+            <div class="video_cont">
+                <div class="video">
+                    <video width="100%" id="videoPlay">
+                        <source src="https://gameshow.geek-8.com/convert/mouyiran/eb904eccad9db09b64453df93ba0c7c4.mp4" type="video/mp4" />
+                    </video>
+                    <img src="./images/play.png" alt="播放" class="play">
+                </div>
+                <div class="btn_box">
+                    <div class="btn_left">
+                        刷新作品
+                    </div>
+                    <div class="btn_right">
+                        <img src="./images/dianzan.png" alt=""><span id="like">17</span>
+                    </div>
+                </div>  
+            </div>
+            <!-- 内容描述 -->
+            <div class="desc_cont">
+                <h3>这里是标题</h3>
+                <p>这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是作品介绍内容这里是。</p>
+            </div>
+            <div class="audition">
+                <div class="audition_cont">
+                    <p>极客晨星少儿编程</p>
+                    <p>北京市望京校区</p>
+                </div>
+                <div class="audition_btn">
+                    <span>免费试听</span>
+                </div>
+            </div>
+       </section>
+       <!-- 底部分享 -->
+       <footer id="footer">
+            <p>
+                <img src="./images/fenxiang.png" alt="fenxiang"><span>分享作品，让别人为你点赞吧！</span>
+            </p>
+       </footer>
+   </div> 
+   <div class="dialog">
+        <img src="./images/fenxiangImg.png" alt="分享">
+   </div>
+</body>
+<script>
+$(function(){
+    var codeUrl = window.localStorage.codeurl; // 已发布程序url
+    var title = window.localStorage.codetitle; // 标题
+    var desc = window.localStorage.codedesc; // 描述
+    var user = window.localStorage.name; // 用户名
+    var fullname = window.localStorage.fullname; // 姓名
+    var headimgurl = window.localStorage.headimgurl; // 头像
+    $('.desc_cont h3').html(title); // 标题
+    $('.desc_cont p').html(desc); // 描述
+    $('#header dl dt img').prop('src',headimgurl); // 头像
+    $('#header dl dd p').html(fullname) // 姓名
+    
+    // 点击免费试听
+    $('.audition_btn').on('click',function(){
+       window.location.href = 'https://m.jikestar.com/franchise/?Sharedby=' + user
+    })
+    // 点击分享作品显示分享指示
+    $("#footer p").on('click',function(){
+        $('.dialog').show();
+    })
+    // 点击遮罩层隐藏
+    $('.dialog').on('click',function(){
+        $(this).hide();
+    })
+
+    // 点赞
+    var info = '[{"_id":"5e523a33e21ef30b84fdb11f","name":"mouyiran","file":"eb904eccad9db09b64453df93ba0c7c4.mp4","game":"Scratch","desc":"","title":"牟奕然《小星打病毒》","read":174,"like": 10,"share":3,"created":"2020-02-23T16:39:15.000Z","fullname":"牟奕然","teacher":"wangzeng","type":"studentff1","grade":"","sales":"青岛市市北总校区"}]';
+    var user = user;
+    var file = 'eb904eccad9db09b64453df93ba0c7c4';
+    // var fullname = '牟奕然';
+    // fullname = fullname ? fullname : user;
+    var host = 'gameshow.geek-8.com'
+    var json = JSON.parse(info);
+    var item = null;
+    var index = 0;
+    for(var i=0; i<json.length; i++){
+      if(json[i].file.indexOf(file) !== -1){
+        item = json[i];
+        index = i;
+        break;
+      }
+    }
+    
+    // 点赞功能
+    $('.btn_right').on('click',function(){
+        var like = $(this).find('span');
+        var count = parseInt(like.html())+1;
+        like.html(count);
+        var formData = new FormData();
+        formData.append('user', user);
+        formData.append('file', file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://'+ host +'/updateLike', true);
+        xhr.onload = function(){
+            console.log(xhr.status);
+        }
+        xhr.send(formData);
+    })
+    $('#like').html(item.like ? item.like : 0); // 点赞数目
+
+
+    // 微信分享
+    sharePyqmessage();
+    function sharePyqmessage(){
+        var urlShared = window.location.href;
+        var urlEncoded = encodeURIComponent(window.location.href);
+        var urlRequest = 'https://mars.geek-8.com/jssdkparams?userurl=' + urlEncoded;
+        console.log('urlShared ' + urlShared);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', urlRequest, true);
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+            var json = JSON.parse(xhr.response);
+            var urlImg, title,wxdesc;
+            urlImg = 'https://cdn1.geek-8.com/geekmooc/media/upload_6fae7aef5a8ddbd0c60b011fa4632204.png'; // 转发图标
+            title = `极客晨星小学员${fullname}的编程作品`; // 转发标题
+            wxdesc = `${fullname}同学的作品${title}生动有趣，赶快查看和分享吧！`// 转发描述
+
+            wx.config({
+                debug: false,
+                appId: json.appId,
+                timestamp: json.timestamp,
+                nonceStr: json.nonceStr,
+                signature: json.signature,
+                jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage']
+            });
+
+            wx.ready(function () {
+                wx.onMenuShareTimeline({
+                    title: title + ':' + wxdesc,
+                    link: urlShared,
+                    imgUrl: urlImg,
+                    success: function () {
+                        console.log('分享成功');
+                    },
+                    cancel: function () {
+                        console.log('分享失败');
+                    }
+                });
+
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: wxdesc,
+                    link: urlShared,
+                    imgUrl: urlImg,
+                    type: '',
+                    dataUrl: '',
+                    success: function () {
+                        console.log('分享成功');
+                    },
+                    cancel: function () { 
+                        console.log('分享失败');
+                    }
+                });
+            });
+            }
+        };
+        xhr.send(null);
+    }
+})
+</script>
+</html>

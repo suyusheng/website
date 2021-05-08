@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/bindAccount.css">
+    <script src="https://cdn1.geek-8.com/lib/jquery-3.3.1.min.js"></script>
+    <title>绑定账号</title>
+</head>
+<body>
+    <div id="main">
+        <h3 class="title">已绑定如下账号</h3>
+        <div class="account_cont">
+            <div class="formlist">
+                <form action="https://school.geek-8.com/parentreg" mehtod="post" enctype="application/x-www-form-urlencoded">
+                    <!-- <div class="form_group" id="username">
+                        <label for="">用户名：</label>
+                        <input type="text" id="userName">
+                    </div> -->
+                    <div class="form_group">
+                        <label for="">孩子姓名：</label>
+                        <input type="text" id="childname">
+                    </div>
+                    <div class="form_group">
+                        <label for="">手机号码：</label>
+                        <input type="text" id="phone">
+                        <input type="text" id="openid" style="display: none;">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="submit_btn">
+            <p class="prompt-text"></p>
+            <p class="infomessage">绑定账号后可通过微信服务号查看学习报告、接收上课提醒</p>
+            <button id="submit">确认绑定</button>
+        </div>
+    </div>
+</body>
+<script>
+$(function(){
+    // 获取地址栏参数
+    function getQueryVariable(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return r[2];
+        }
+        return null;
+    }
+    // 获取openid
+    var openid = '';
+    if(!getQueryVariable('openid')){
+        var finaluri = encodeURIComponent(window.location.href);
+        var redirect_uri = encodeURIComponent("https://mooc.jikestar.com/moocreg_openid?finaluri=" + finaluri);
+        window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx86aa589603351512&redirect_uri=" + redirect_uri + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+    }    
+    openid = getQueryVariable('openid');// openid
+    // openid = 'o6VgEj0Y52qOFweUfaeUEij_b_Mg';
+    $('#openid').val(openid);
+    function submitHandler () {
+        var childname = $('#childname').val();
+        var phoneTel = $('#phone').val();
+        if(childname == "" || phoneTel == ""){
+            $('.prompt-text').text("每项都需要填写哦！");
+            return;
+        }
+        // 校验手机号
+        var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!myreg.test(phoneTel)) {
+            $('.prompt-text').text("手机号填写有误");
+            return;
+        }
+        $('.prompt-text').text("");
+        $('form').submit();
+    }
+    // 确认绑定
+    $("#submit").on('click',function(){
+        submitHandler()
+    })
+})
+</script>
+</html>

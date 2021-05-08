@@ -1,0 +1,263 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: calc(100vw/7.5);
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    background:#FDAC1C;
+}
+#main{
+    width: 100%;
+    height: 100%;
+    background: url('../images/zcbgimg.png') no-repeat;
+    background-size: 100% 100%;
+}
+header{
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+header dl{
+    padding-top: .46rem;
+}
+header dl dt img{
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+}
+header dl dd p{
+    font-size: .32rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+}
+.section{
+    width: 100%;
+    height: auto;
+    padding: 0rem .35rem;
+    margin-top: .39rem;
+}
+/* 上课记录 */
+.class_record{
+    width: 100%;
+    height: auto;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px .16rem 0px rgba(181,181,181,0.2);
+    border-radius: .24rem;
+}
+.class_record ul li{
+    width: 100%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.class_record ul li img{
+    width: .68rem;
+    height: .68rem;
+    position: absolute;
+    left: .36rem;
+    top: 50%;
+    margin-top: -.34rem;
+}
+.class_record ul li span{
+    display: inline-block;
+    font-size: .34rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(25,25,25,1); 
+    position: absolute;
+    left: 1.47rem;
+}
+.class_record ul li #class_record{
+    width: .2rem;
+    height: .36rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.18rem;
+}
+
+/* 成果区 */
+.video_result{
+    width: 100%;
+    height: 1.5rem;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px .16rem 0px rgba(181,181,181,0.2);
+    border-radius: .24rem;
+    margin-top: .3rem;
+}
+.video_result ul li{
+    width: 100%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.video_result ul li img{
+    width: .68rem;
+    height: .68rem;
+    position: absolute;
+    left: .36rem;
+    top: 50%;
+    margin-top: -.34rem;
+}
+.video_result ul li span{
+    display: inline-block;
+    font-size: .34rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(25,25,25,1); 
+    position: absolute;
+    left: 1.47rem;
+}
+.video_result ul li #video_result{
+    width: .2rem;
+    height: .36rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.18rem;
+}
+
+/* 已发布程序 */
+.code_result{
+    width: 100%;
+    height: 1.5rem;
+    /* line-height: 1.5rem; */
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px .16rem 0px rgba(181,181,181,0.2);
+    border-radius: .24rem;
+    margin-top: .3rem;
+}
+.code_result ul li{
+    width: 100%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.code_result ul li img{
+    width: .68rem;
+    height: .68rem;
+    position: absolute;
+    left: .36rem;
+    top: 50%;
+    margin-top: -.34rem;
+}
+.code_result ul li span{
+    display: inline-block;
+    font-size: .34rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(25,25,25,1); 
+    position: absolute;
+    left: 1.47rem;
+}
+.code_result ul li #video_result{
+    width: .16rem;
+    height: .28rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.14rem;
+}
+.code_result ul li #code_result{
+    width: .2rem;
+    height: .36rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.18rem;
+}
+
+/* 个人信息 */
+.person_info{
+    width: 100%;
+    height: 1.5rem;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px .16rem 0px rgba(181,181,181,0.2);
+    border-radius: .24rem;
+    margin-top: .3rem;
+}
+.person_info ul li{
+    width: 100%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.person_info ul li img{
+    width: .68rem;
+    height: .68rem;
+    position: absolute;
+    left: .36rem;
+    top: 50%;
+    margin-top: -.34rem;
+}
+.person_info ul li span{
+    display: inline-block;
+    font-size: .34rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(25,25,25,1); 
+    position: absolute;
+    left: 1.47rem;
+}
+.person_info ul li #person_info{
+    width: .2rem;
+    height: .36rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.18rem;
+}
+
+
+
+/* 探星计划 */
+.tanxing_play{
+    width: 100%;
+    height: 1.5rem;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px .16rem 0px rgba(181,181,181,0.2);
+    border-radius: .24rem;
+    margin-top: .3rem;
+}
+.tanxing_play ul li{
+    width: 100%;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    display: flex;
+    position: relative;
+}
+.tanxing_play ul li img{
+    width: .68rem;
+    height: .68rem;
+    position: absolute;
+    left: .36rem;
+    top: 50%;
+    margin-top: -.34rem;
+}
+.tanxing_play ul li span{
+    display: inline-block;
+    font-size: .34rem;
+    font-family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;
+    color:rgba(25,25,25,1); 
+    position: absolute;
+    left: 1.47rem;
+}
+.tanxing_play ul li #tanxing_play{
+    width: .2rem;
+    height: .36rem;
+    position: absolute;
+    left: 6.09rem;
+    top: 50%;
+    margin-top: -.18rem;
+}

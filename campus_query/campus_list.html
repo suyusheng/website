@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/campus_list.css">
+    <script src="../vendor/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="./css/picker1.css">
+    <script src="./js/location1.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=S26G4nvPpORqeTGosrNI7oGVkmVMP0Vd"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <title>极客晨星少儿编程全国校区</title>
+</head>
+
+<body>
+    <div id="campus_list_box">
+        <header id="header">
+            <div class="search_input">
+                <input type="text" id="search" placeholder="选择校区" autocomplete="off" readonly>
+                <img src="./images/Group 4.png" alt="下拉三角" id="sanjiao">
+                <img src="./images/Group 2.png" alt="定位" id="dt">
+            </div>
+        </header>
+        <section id="section">
+            <!-- <div class="city_message">
+                <div class="city_list">
+                    <dl>
+                        <dt>
+                            <img src="./images/touxiang.jpg" alt="">
+                        </dt>
+                        <dd>
+                            <h3>成都市崇州市校区</h3>
+                            <p><img src="./images/Group 5.png" alt=""><span>无锡市梁溪区西奥教育广场1楼</span></p>
+                            <p><img src="./images/Group 6.png" alt=""><span>400-810-8918</span></p>
+                            <p><img src="./images/Group 11.png" alt=""><span>工作日：周二~周日 9:00-20:00<br>休息日：周一</p>
+                        </dd>
+                    </dl>
+                </div>  
+                <div class="check_detail">
+                    <button>查看详情</button>
+                </div>
+            </div> -->
+        </section>
+        <!-- 百度地图 -->
+        <div id="allmap"></div>
+    </div>
+</body>
+<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=alwLOuQQI2tVOfSFM32rpCvB9qRRqvf0"></script>
+<script>
+$(function () {
+    var total;
+    var cityName = '';
+    var cityList = [];
+    var longitude, latitude; // 经纬度    
+    $('#search').val('北京市 北京市');
+    $.ajax({
+        url: 'https://school.geek-8.com/allschools',
+        type: 'POST',
+        datatype: 'json',
+        async: true,
+        success: function (data) {
+            var data = JSON.parse(data.slist);
+            cityList = data;
+            var area = [];
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].city) {
+                    // console.log(data[i].city)
+                    var val = data[i].city.split(',');
+                    if (val.length === 3)
+                        area.push(val);
+                }
+            }
+
+            var sheng = {};
+            for (var j = 0; j < area.length; j++) {
+                var item = area[j];
+                if (!sheng.hasOwnProperty(item[0]))
+                    sheng[item[0]] = {};
+                if (!sheng[item[0]].hasOwnProperty(item[1]))
+                    sheng[item[0]][item[1]] = [];
+                if (sheng[item[0]][item[1]].indexOf(item[2]) === -1)
+                    sheng[item[0]][item[1]].push(item[2]);
+            }
+            // console.log(sheng);
+
+            var count = 0;
+            total = [undefined];
+            var result = {
+                '0': {}
+            };
+            for (var key in sheng) {
+                var obj1 = {};
+                obj1[(++count) + ''] = key;
+                total.push(obj1);
+                result['0'][count + ''] = key;
+                var a = count;
+                for (var kk in sheng[key]) {
+                    var obj2 = {};
+                    obj2[(++count) + ''] = kk;
+                    total.push(obj2);
+
+                    if (!result.hasOwnProperty('0,' + a))
+                    result['0,' + a] = {};
+                    result['0,' + a][count + ''] = kk;
+
+                    var c = count - 1;
+
+                    for (var u = 0; u < sheng[key][kk].length; u++) {
+                        var obj3 = {};
+                        obj3[(++count) + ''] = sheng[key][kk][u];
+                        total.push(obj3);
+
+                        if (!result.hasOwnProperty('0,' + a + ',' + (c + 1)))
+                        result['0,' + a + ',' + (c + 1)] = {};
+                        result['0,' + a + ',' + (c + 1)][count + ''] = sheng[key][kk][u];
+                    }
+                }
+            }
+
+            // console.log(result);
+            ppi(result);
+            var cityInput = '北京市,北京市';
+            var hascity = [];
+             for(var i =0; i < cityList.length; i++) {
+                if(cityList[i].city && typeof cityList[i].city === 'string' && cityList[i].city.indexOf(cityInput) > -1)
+                hascity.push(cityList[i]);
+            }
+            if(hascity){
+                // console.log(hascity)
+                refresh(hascity);
+            }
+            // refresh(cityList);  
+        },
+        error: function (error) {
+            console.log(error)
+        }
+    })
+
+    // 渲染 dom层
+    function refresh(cities) {
+        var html = '';
+        $('#section').empty();
+        cities.forEach(function (data) {
+            // console.log(data)
+            var locationUrl = new RegExp("^/.*$").test(data.qiantai);
+            if(data.qiantai){
+                if(locationUrl){
+                    html += `
+                    <div class="city_message">
+                        <div class="city_list">
+                            <dl>    
+                                <dt>
+                                    <img src="https://www.jikestar.com${data.qiantai}" alt="">
+                                </dt>
+                                <dd>
+                                    <h3>${data.name}</h3>
+                                    <p><img src="./images/Group 5.png" alt=""><span>${data.name}</span></p>
+                                    <p><img src="./images/Group 6.png" alt=""><span>${data.phone ? data.phone : '400-810-8918'}</span></p>
+                                    <p><img src="./images/Group 11.png" alt=""><span>${data.gongzuo}<br>${data.xiuxi}</p>
+                                </dd>
+                            </dl>
+                        </div>  
+                        <div class="check_detail">
+                            <button>查看详情</button>
+                        </div>
+                    </div>
+                    `;
+                }else{
+                    html += `
+                    <div class="city_message">
+                        <div class="city_list">
+                            <dl>    
+                                <dt>
+                                    <img src="${data.qiantai}" alt="">
+                                </dt>
+                                <dd>
+                                    <h3>${data.name}</h3>
+                                    <p><img src="./images/Group 5.png" alt=""><span>${data.name}</span></p>
+                                    <p><img src="./images/Group 6.png" alt=""><span>${data.phone ? data.phone : '400-810-8918'}</span></p>
+                                    <p><img src="./images/Group 11.png" alt=""><span>${data.gongzuo}<br>${data.xiuxi}</p>
+                                </dd>
+                            </dl>
+                        </div>  
+                        <div class="check_detail">
+                            <button>查看详情</button>
+                        </div>
+                    </div>
+                    `;
+                }
+            }else{
+                html += `
+                    <div class="city_message">
+                        <div class="city_list">
+                            <dl>    
+                                <dt>
+                                    <img src="./images/schoolImg.png" alt="">
+                                </dt>
+                                <dd>
+                                    <h3>${data.name}</h3>
+                                    <p><img src="./images/Group 5.png" alt=""><span>${data.name}</span></p>
+                                    <p><img src="./images/Group 6.png" alt=""><span>${data.phone ? data.phone : '400-810-8918'}</span></p>
+                                    <p><img src="./images/Group 11.png" alt=""><span>${data.gongzuo}<br>${data.xiuxi}</p>
+                                </dd>
+                            </dl>
+                        </div>  
+                        <div class="check_detail">
+                            <button>查看详情</button>
+                        </div>
+                    </div>
+                    `;
+            }
+            
+        })
+        $('#section').append(html); // 追加列表信息
+    }
+
+    // 点击查看详情
+    $('#section').on('click', '.check_detail', function () {
+        var name = $(this).siblings('.city_list').find('dl dd h3').text();
+        window.localStorage.schoolname = name;
+        window.open('./campus_detail.html', '_self');
+    });
+
+    // 筛选校区信息
+    function ppi(rr){
+        var obj = {
+            city: false,
+            area: false,
+            pca: ['北京市','北京市','朝阳区'],	
+            pick: function(data){
+                console.log(data);
+            } // 回调
+        }
+        var locationobj = new Location();
+        locationobj.items = rr;
+        var location = locationobj.items;
+        // console.log(location)
+        var global = {};
+        var globalIndex = 0;
+        var item_height = 0;
+        var eventArr = {'pc': ['mousedown', 'mousemove', 'mouseup'], 'phone': ['touchstart', 'touchmove', 'touchend']};
+        var eventType = 'phone';
+        if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            eventType = 'phone';
+        }else{
+            eventType = 'pc';
+        }
+        // console.log(location)
+        $.fn.Picker = function(options){
+            var settings = $.extend({},obj,options);
+            var Self = $(this);
+            var curGlobalIndex = globalIndex++;
+            global[curGlobalIndex] = {};
+            global[curGlobalIndex].createOn = false;
+            global[curGlobalIndex].selfOne = true;
+            global[curGlobalIndex].s_time = null;
+            global[curGlobalIndex].s_pageY = null;
+            global[curGlobalIndex].initTransY = [];
+            global[curGlobalIndex].item_height = 0;
+            global[curGlobalIndex].selectVal = [];
+            global[curGlobalIndex].selectId = [];
+            global[curGlobalIndex].timer = {};
+            global[curGlobalIndex].pcaindex = {p:1, c:2, a:2};
+            global[curGlobalIndex].canInit = true;
+            global[curGlobalIndex].rotate = {p: [], c: [], a: []};
+            
+            if(!global[curGlobalIndex].createOn) {
+                createModel(settings, Self, curGlobalIndex);
+                global[curGlobalIndex].createOn = true;
+            }
+            Self.on("click",function(){
+                $("#picker-menban"+curGlobalIndex).fadeIn();
+                $("#picker-model"+curGlobalIndex).addClass("move-in"); 
+                setProvince($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(0), curGlobalIndex);
+                setCity($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(1), curGlobalIndex);
+                setArea($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(2), curGlobalIndex);
+                resetPca(curGlobalIndex)
+                if(global[curGlobalIndex].canInit){
+                    initPca(settings.pca, curGlobalIndex)
+                    global[curGlobalIndex].canInit = false;
+                }
+            })
+            $("#picker-model"+curGlobalIndex+" .choose-hook").on("click",function(){
+                hidePicker();
+                if($(this).hasClass("picker-sure")){
+                    writeVal(settings, Self, curGlobalIndex);
+                    // console.log(global[curGlobalIndex])
+                    settings.pick && settings.pick(global[curGlobalIndex].pcaindex);
+                }
+            })
+        }
+        // 创建弹层
+        function createModel(obj, self, curGlobalIndex){
+            // console.log(obj)
+            var html = `
+                <div class="picker-menban" id="picker-menban${curGlobalIndex}"></div>
+                <div class="picker-model" id="picker-model${curGlobalIndex}">
+                    <div class="toolbar">
+                        <div class="toolbar-inner">
+                            <div class="left"><a class="choose-hook picker-cacel">取消</a></div>
+                            <div class="center"><a class="choose-hook picker-cacel">选择地区</a></div>
+                            <div class="right"><a class="choose-hook picker-sure">确定</a></div>
+                        </div>
+                    </div>
+                    <div class="picker-model-content">
+                        ${'<div class="picker-col-items picker-col-left"><div class="picker-col-wrapper"></div></div>'}
+                        ${obj.city ? '<div class="picker-col-items picker-col-center"><div class="picker-col-wrapper"></div></div>' : ''}
+                        ${obj.city&&obj.area ? '<div class="picker-col-items picker-col-right"><div class="picker-col-wrapper"></div></div>' : ''}
+                        <div class="picker-center-highlight"></div>
+                        <div class="mask-top"></div>
+                        <div class="mask-bottom"></div>
+                    </div>
+                </div>
+            `;
+            $("body").append(html);
+            item_height = $("#picker-model"+curGlobalIndex+" .picker-center-highlight").outerHeight();
+            $("#picker-model"+curGlobalIndex+" .picker-col-items").css("width","calc(100% / "+$("#picker-model"+curGlobalIndex+" .picker-col-items").length+")");
+            $("#picker-model"+curGlobalIndex+" .picker-col-items").each(function(i, v){
+                global[curGlobalIndex].initTransY.push(0);
+                (function(index){
+                    TouchFun(v, index, obj, self, curGlobalIndex);
+                })(i)
+            })
+        }
+        // 设置省
+        function setProvince(el, curGlobalIndex){
+            var p_html = '';
+            var data = location[0];
+            for(var i in data) {
+                p_html += '<div class="picker-items" data-id="'+i+'">'+data[i]+'</div>';
+            }
+            $(el).find(".picker-col-wrapper").html('');
+            $(el).find(".picker-col-wrapper").html(p_html);
+            $(el).find(".picker-col-wrapper").css({transform:"translateY("+ Number(0) +"px)","transition":"none"});
+            if(global[curGlobalIndex].canInit){
+                $(el).find(".picker-items").each(function(i, v){
+                    if($(v).data('id') == global[curGlobalIndex].pcaindex.p){
+                        $(el).find(".picker-col-wrapper").css({transform:"translateY("+ -(i*item_height) +"px)","transition":"none"});
+                        global[curGlobalIndex].initTransY[0] = -(i*item_height);
+                    }
+                })
+            }
+            setRotate("#picker-model"+curGlobalIndex+" .picker-col-left","p", curGlobalIndex)
+        }
+        // 设置市
+        function setCity(el, curGlobalIndex){
+            var s_html = '';
+            var data = location[0+','+global[curGlobalIndex].pcaindex.p];
+            for(var i in data){
+                // console.log(data[i])
+                s_html += '<div class="picker-items" data-id="'+i+'">'+data[i]+'</div>';
+            }
+            $(el).find(".picker-col-wrapper").html('');
+            $(el).find(".picker-col-wrapper").html(s_html);
+            $(el).find(".picker-col-wrapper").css({transform:"translateY("+ Number(0) +"px)","transition":"none"});
+            if(global[curGlobalIndex].canInit){
+                $(el).find(".picker-items").each(function(i, v){
+                    if($(v).data('id') == global[curGlobalIndex].pcaindex.c){
+                        $(el).find(".picker-col-wrapper").css({transform:"translateY("+ -(i*item_height) +"px)","transition":"none"});
+                        global[curGlobalIndex].initTransY[1] = -(i*item_height);
+                    }
+                })
+            }
+            setRotate("#picker-model"+curGlobalIndex+" .picker-col-center","c", curGlobalIndex)
+        }
+        // 设置区
+        function setArea(el, curGlobalIndex){
+            var a_html = '';
+            var data = location[0+','+global[curGlobalIndex].pcaindex.p+','+global[curGlobalIndex].pcaindex.c];
+            for(var i in data){
+                //console.log('xueliang')
+                 //console.log(data[i])
+                a_html += '<div class="picker-items" data-id="'+i+'">'+data[i]+'</div>';
+            }
+            $(el).find(".picker-col-wrapper").html('');
+            $(el).find(".picker-col-wrapper").html(a_html);
+            $(el).find(".picker-col-wrapper").css({transform:"translateY("+ Number(0) +"px)","transition":"none"});
+            if(global[curGlobalIndex].canInit){
+                $(el).find(".picker-items").each(function(i, v){
+                    if($(v).data('id') == global[curGlobalIndex].pcaindex.a){
+                        
+                        $(el).find(".picker-col-wrapper").css({transform:"translateY("+ -(i*item_height) +"px)","transition":"none"});
+                        global[curGlobalIndex].initTransY[2] = -(i*item_height);
+                    }
+                })
+            }
+            setRotate("#picker-model"+curGlobalIndex+" .picker-col-right","a", curGlobalIndex)
+        }
+        // 滑动事件
+        function TouchFun(el, index, datalist, self, curGlobalIndex){
+            var arr = ['p','c','a'];
+            //开关打开
+            var isDown = false;
+            $(el).on(eventArr[eventType][0],function(e){
+                // console.log(e.target.innerHTML)
+                e.preventDefault();
+                if(eventType == 'pc'){
+                    global[curGlobalIndex].s_pageY = e.clientY;
+                    s_time = e.timeStamp;
+                    isDown = true;
+                    return false;
+                }
+                if(e.originalEvent.changedTouches[0]){
+                    global[curGlobalIndex].s_pageY = e.originalEvent.changedTouches[0].clientY;
+                    s_time = e.timeStamp;
+                }
+                
+            })
+            $(el).on(eventArr[eventType][1],function(e){
+                e.preventDefault();
+                if(eventType == 'pc'){
+                    if(!isDown){
+                        return;
+                    }
+                    var distance = e.clientY - global[curGlobalIndex].s_pageY;
+                }else{
+                    var distance = e.originalEvent.changedTouches[0].clientY - global[curGlobalIndex].s_pageY;
+                }
+                $(el).find(".picker-col-wrapper").css({transform:"translateY("+ Number(global[curGlobalIndex].initTransY[index]+distance) +"px)","transition":"none"})
+                $(el).find(".picker-items").each(function(i,v){
+                    $(v).css({
+                        transform: "rotateX("+(global[curGlobalIndex].rotate[arr[index]][i]+distance*25/36)+"deg)",
+                        transition: "none"
+                    })
+                })
+            })
+            $(el).on(eventArr[eventType][2],function(e){
+                e.preventDefault();
+                if(eventType == 'pc'){
+                    var distance = e.clientY - global[curGlobalIndex].s_pageY;
+                    isDown = false;	//开关关闭
+                }else{
+                    var distance = e.originalEvent.changedTouches[0].clientY - global[curGlobalIndex].s_pageY;
+                }
+                
+                var long_height = $(el).find(".picker-col-wrapper").outerHeight();
+                // 求滚动初始速度
+                var time_ge = (e.timeStamp - s_time);
+                var v = distance / (e.timeStamp - s_time);
+                if(time_ge>300){
+                    v = 0;
+                }
+                inertiaMove(v, distance, index, el, datalist, self, curGlobalIndex, long_height)
+
+            })
+        }
+        // 滑动函数
+        function inertiaMove(v, distance,index, el, datalist, self, curGlobalIndex, long_height){
+            var arr = ['p','c','a'];
+            var numm = 0;
+            var out_time = v==0 ? 0.2 : 1;		//最后缓冲时间
+            clearInterval(global[curGlobalIndex].timer[index]);
+            function request(){
+                
+                distance += v*500;
+                if(distance<0){
+                    if(Math.abs(distance)%item_height>=item_height/2){
+                        var yu = Math.abs(distance)%item_height;
+                        distance = distance-(item_height-yu)
+                    }else{
+                        var yu = Math.abs(distance)%item_height;
+                        distance = distance+yu
+                    }
+                }else{
+                    if(Math.abs(distance)%item_height>=item_height/2){
+                        var yu = Math.abs(distance)%item_height;
+                        distance = distance+(item_height-yu)
+                    }else{
+                        var yu = Math.abs(distance)%item_height;
+                        distance = distance-yu
+                    }
+                }
+                var trans = Number(global[curGlobalIndex].initTransY[index]+distance);
+                if(Math.abs(global[curGlobalIndex].initTransY[index]+distance) >= long_height-item_height) {
+                    trans = -(long_height-item_height);
+                    out_time = 0.2;
+                }
+                if(global[curGlobalIndex].initTransY[index]+distance > 0 ) {
+                    trans = 0;
+                    out_time = 0.2;
+                }
+                $(el).find(".picker-col-wrapper").css({transform:"translateY("+ Number(trans) +"px)", "transition": "transform "+out_time+"s ease-out"});
+                global[curGlobalIndex].initTransY[index] = Number(trans);
+                
+                
+                var num2 = Math.floor( Math.abs(trans) / $(".picker-center-highlight").eq(0).outerHeight());
+                global[curGlobalIndex].rotate[arr[index]] = [];
+                $(el).find(".picker-items").each(function(i,v){
+                    $(v).css({
+                        transform: "rotateX("+(i-num2)*25+"deg)",
+                        transition: "transform "+out_time+"s ease-out"
+                    })
+                    global[curGlobalIndex].rotate[arr[index]].push((i-num2)*25);
+                })
+            }
+            request();
+            global[curGlobalIndex].timer[index] = setTimeout(function(){
+                judgeNum(global[curGlobalIndex].initTransY[index], index, el, datalist, self, curGlobalIndex)
+            }, out_time*1000)
+            
+        }
+        function judgeNum(distance, index, el, datalist, self, curGlobalIndex){
+            var num = Math.abs(distance / item_height);
+            var id = Number($(el).find(".picker-items").eq(num).data("id"));
+            global[curGlobalIndex].selectVal[index] = id;
+            global[curGlobalIndex].selectId[index] = Number($(el).find(".picker-items").eq(num).data("id"));
+
+            if(index == 0){
+                global[curGlobalIndex].pcaindex.p = id;
+                datalist.city ? setCity($(el).next(), curGlobalIndex) : '';
+                global[curGlobalIndex].initTransY[index+1] = 0;
+                global[curGlobalIndex].pcaindex.c = $(el).next().find('.picker-items').eq(0).data('id');
+                datalist.area ? setArea($(el).next().next(), curGlobalIndex) : '';
+                global[curGlobalIndex].pcaindex.a = $(el).next().next().find('.picker-items').eq(0).data('id');
+                global[curGlobalIndex].initTransY[index+2] = 0;
+            }else if(index==1){
+                global[curGlobalIndex].pcaindex.c = id;
+                datalist.area ? setArea($(el).next(), curGlobalIndex): ''
+                global[curGlobalIndex].pcaindex.a = $(el).next().find('.picker-items').eq(0).data('id');
+                global[curGlobalIndex].initTransY[index+1] = 0;
+            }else {
+                global[curGlobalIndex].pcaindex.a = id;
+            }
+            writeVal(datalist, self, curGlobalIndex);
+        }
+        function setRotate(el,type, curGlobalIndex){
+            var num = 0;
+            global[curGlobalIndex].rotate[type] = [];
+            $(el).find(".picker-items").each(function(i,v){
+                if($(v).data("id") == global[curGlobalIndex].pcaindex[type]){
+                    num = i;
+                }
+            })
+            $(el).find(".picker-items").each(function(i,v){
+                $(v).css({
+                    transform: "rotateX("+(i-num)*25+"deg)",
+                    transition: 'none'
+                })
+                global[curGlobalIndex].rotate[type].push((i-num)*25);
+            })
+        }
+        function resetPca(curGlobalIndex){
+            $.each(global[curGlobalIndex].initTransY, function(i, v){
+                $("#picker-model"+curGlobalIndex).find('.picker-col-items').eq(i).find('.picker-col-wrapper').css('transform', 'translateY('+v+'px)')
+            })
+        }
+        function initPca(data, curGlobalIndex) {
+            var num = 0, countindex=0,current_id=[];
+            var para = '0';
+            function getid(){
+                for(var index in location[para]){
+                    if(location[para][index].indexOf(data[countindex])== -1){
+                        num++;
+                    }else{
+                        current_id.push(index);
+                        break;
+                    }
+                }
+                if(countindex<data.length){			
+                    para += ','+current_id[countindex]
+                    countindex++;
+                    getid();
+                }
+            }
+            getid();
+            global[curGlobalIndex].pcaindex.p = current_id[0];
+            global[curGlobalIndex].pcaindex.c = current_id[1];
+            global[curGlobalIndex].pcaindex.a = current_id[2];
+            setProvince($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(0), curGlobalIndex);
+            setCity($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(1), curGlobalIndex);
+            setArea($("#picker-model"+curGlobalIndex+" .picker-col-items").eq(2), curGlobalIndex);
+        }
+        
+        // 省 市  区
+        function writeVal(data, el, curGlobalIndex){
+            var text = '';
+            text = `${location['0'][global[curGlobalIndex].pcaindex.p]}  ${global[curGlobalIndex].pcaindex.c ? location['0,'+global[curGlobalIndex].pcaindex.p][global[curGlobalIndex].pcaindex.c] : ''}  ${global[curGlobalIndex].pcaindex.a ? location['0,'+global[curGlobalIndex].pcaindex.p+','+global[curGlobalIndex].pcaindex.c][global[curGlobalIndex].pcaindex.a] : ''}`;
+            // console.log(text)
+            $(el).val(text);
+            if(el[0].nodeName != 'INPUT'&&'TEXTAREA'){
+                $(el).text(text)
+            }
+        }
+
+        function hidePicker(){
+            $(".picker-model").removeClass("move-in");
+            $(".picker-menban").fadeOut();
+        }
+
+        $("#search").Picker({
+            city: true,
+            area: true,
+            pca: ['北京市','北京市','朝阳区'],
+            pick: function (res) {
+                // console.log(res)
+                if(res.c && res.a)
+                cityName = total[res.p][res.p]+','+total[res.c][res.c]+','+total[res.a][res.a]; // 省 市 区都有
+                if(res.c && !res.a)
+                cityName = total[res.p][res.p]+','+total[res.c][res.c]; // 只有省 市
+                if(!res.c)
+                cityName = total[res.p][res.p]; // 只有区
+                console.log(cityName)
+                var hasCity = [];
+                // console.log(cityName);
+
+                for(var i =0; i < cityList.length; i++) {
+                    if(cityList[i].city && typeof cityList[i].city === 'string' && cityList[i].city.indexOf(cityName) > -1)
+                    hasCity.push(cityList[i]);
+                }
+                if(hasCity){
+                    console.log(hasCity)
+                    //cityList = [];
+                    //cityList = hasCity;
+                    refresh(hasCity);
+                }
+            }
+        })
+    }
+
+    // 获取地址经纬度
+    var urlShared = window.location.href;
+    var urlEncoded = encodeURIComponent(urlShared);
+    $.post("https://school.geek-8.com/regonline", {url: urlShared}, function(json) {
+        wx.config({
+            debug: false,
+            appId: json.appId,
+            timestamp: json.timestamp,
+            nonceStr: json.nonceStr,
+            signature: json.signature,
+            jsApiList: ['getLocation']
+        });
+
+        wx.ready(function(){
+            wx.checkJsApi({
+                jsApiList: [
+                    'getLocation'
+                ],
+                success: function (res) {
+                    // alert(JSON.stringify(res));
+                    // alert(JSON.stringify(res.checkResult.getLocation));
+                    if (res.checkResult.getLocation == false) {
+                        alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
+                        return;
+                    }
+                }
+            }); 
+            wx.error(function(res){
+                alert("接口调取失败");
+            });
+            wx.getLocation({
+                success: function (res) {
+                    longitude = res.longitude; // 经度
+                    latitude = res.latitude; // 纬度
+                    ajaxFn(longitude,latitude);
+                    // alert(`lng: ${res.longitude}, lat: ${res.latitude}`);
+                },
+                cancel: function (res) {
+                    alert('用户拒绝授权获取地理位置');
+                }
+            });
+        });
+    });
+    
+
+    // 地址转经纬度
+	// 百度地图API功能 根据经纬度自动获取当前位置信息
+    // 117.77175 39.10925
+	// ajaxFn(117.77175,39.10925)
+	function ajaxFn (longitude,latitude){
+        var map = new BMap.Map("allmap");
+        var point = new BMap.Point(longitude,latitude);
+        map.centerAndZoom(point,12);
+        var geoc = new BMap.Geocoder(); 
+		var pt = point;
+		geoc.getLocation(pt, function(rs){
+			var addComp = rs.addressComponents;
+            // alert(addComp.province,'当前省');
+            var cityName = addComp.province + "," + addComp.city + "," + addComp.district; // 临近校区位置信息
+            var searchCityname = addComp.province + " " + addComp.city + " " + addComp.district;
+            $('#search').val(searchCityname); // 搜索框显示
+            var hasCity = [];
+            for(var i =0; i < cityList.length; i++) {
+                if(cityList[i].city && typeof cityList[i].city === 'string' && cityList[i].city.indexOf(cityName) > -1)
+                hasCity.push(cityList[i]);
+            }
+            console.log(hasCity)
+            if(hasCity.length == 0){
+                console.log(hasCity)
+                var cityInput = '北京市,北京市';
+                $('#search').val('北京市 北京市')
+                var hascity = [];
+                for(var i =0; i < cityList.length; i++) {
+                    if(cityList[i].city && typeof cityList[i].city === 'string' && cityList[i].city.indexOf(cityInput) > -1)
+                    hascity.push(cityList[i]);
+                }
+                if(hascity){
+                    refresh(hascity);
+                }
+            }else{
+                refresh(hasCity)
+            }
+		});        
+	}
+    // 获取定位名称
+    // 116.47422,39.99552
+})
+</script>
+
+</html>

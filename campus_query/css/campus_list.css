@@ -1,0 +1,148 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+}
+html{
+    font-size: calc(100vw/7.5);
+}
+ul,li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+}
+#campus_list_box{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#header{
+    width: 100%;
+    height: auto;
+    padding: .25rem .35rem .25rem .35rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+}
+.search_input{
+    width: 100%;
+    height: .78rem;
+    line-height: .78rem;
+    position: relative;
+}
+.search_input input{
+    width: 100%;
+    height: .78rem;
+    border-radius:39px;
+    border: none;
+    outline: none;
+    border:2px solid rgba(249,173,0,1);
+    padding-left: 1rem;
+    font-size: .28rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(66,66,66,1);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.search_input #dt{
+    width: .34rem;
+    position: absolute;
+    left: .41rem;
+    top: .22rem;
+}
+.search_input #sanjiao{
+    width: .32rem;
+    position: absolute;
+    right: .4rem;
+    top: .32rem;
+}
+#section{
+    width: 100%;
+    flex: 1;
+    margin-top: 1.4rem;
+    padding: 0rem .3rem;
+}
+.city_message{
+    width: 100%;
+    height: auto;
+    padding: .42rem 0rem 0rem .2rem;
+    margin-bottom: .7rem;
+}
+.city_message .city_list{
+    width: 100%;
+    height: auto;
+    padding-bottom: .48rem;
+}
+.city_list dl{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.city_list dl dt{
+    width: 2.2rem;
+}
+.city_list dl dt img{
+    width: 2.2rem;
+    border-radius: 0.08rem;
+    height: 1.65rem;
+}
+.city_list dl dd{
+    flex: 1;
+    padding-left: .23rem;
+}
+.city_list dl dd h3{
+    font-size: .32rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight: 600;
+    color:rgba(25,25,25,1);
+    padding-bottom: .24rem;
+}
+.city_list dl dd p{
+    width: 100%;
+    height: .47rem;
+    line-height: .47rem;
+    display: flex;
+    justify-content: space-between;
+}
+.city_list dl dd p img{
+    width: .25rem;
+    height: .25rem;
+    margin-top: 0.05rem;
+}
+.city_list dl dd p span{
+    display: inline-block;
+    flex:1;
+    font-size: .24rem;
+    font-family: PingFangSC-Regular,PingFang SC;
+    font-weight: 400;
+    color:rgba(51,51,51,1);
+    line-height: .33rem;
+    padding-left: 0.15rem;
+}
+.check_detail{
+    width:  100%;
+    height: .72rem;
+}
+.check_detail button{
+    width: 100%;
+    height: .72rem;
+    border: none;
+    outline: none;
+    background:rgba(249,173,0,1);
+    border-radius:36px;
+    font-size: .28rem;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}

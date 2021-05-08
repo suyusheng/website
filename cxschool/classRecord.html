@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/classrecord.css">
+    <script src="https://cdn1.geek-8.com/lib/jquery-3.3.1.min.js"></script>
+    <title>上课记录</title>
+</head>
+
+<body>
+    <div id="main">
+        <!-- 学习报告 -->
+        <!-- <div class="studyReport_box">
+            <div class="title">
+                <span>2020年4月10日</span>
+            </div>
+            <div class="cont">
+               <ul>
+                   <li><img src="./images/02.png" alt="上课时间"><span>上课时间：19:00</span></li>
+                   <li><img src="./images/个人信息.png" alt="个人信息"><span>授课老师：刘老师</span></li>
+               </ul>
+               <div class="btn">
+                    <div class="btn_left">
+                        <img src="./images/study.png" alt="学习报告"><span>学习报告</span>
+                    </div>
+                    <div class="btn_right">
+                        <img src="./images/study.png" alt="阶段测评报告"><span>阶段测评报告</span>
+                    </div>
+               </div>
+            </div>
+        </div> -->
+
+        <!-- 无上课记录提示 -->
+        <div class="prompt_box" style="display: none">
+            <dl>
+                <dt>
+                    <img src="./images/prompt.png" alt="提示">
+                </dt>
+                <dd>
+                    <p>没找到您上课的记录</p>
+                    <p>请咨询您的授课老师关于每节课后的学案</p>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        // 时间戳转换年 月 日格式
+        function formatDate(timestamp) {
+            var date = new Date(timestamp);
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            return year + '年' + month + '月' + day + '日';
+        }
+        // 时 分 秒
+        function formatDates(timestamp) {
+            var date = new Date(timestamp);
+            var hours = date.getHours();
+            var minutes = addZero(date.getMinutes());
+            return hours + ':' + minutes;
+        }
+        // 处理时间
+        function addZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+        var data = [];
+        $.ajax({
+            url: 'https://school.geek-8.com/classdocs',
+            type: 'get',
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true // 上传凭证
+            },
+            success: function (data) {
+                // 判断有无上课记录 若没有上课记录则显示提示内容
+                if (data.length == 0) {
+                    $('.prompt_box').show();
+                } else {
+                    data.sort(function (a, b) {
+                        return a.starttime < b.starttime ? 1 : -1
+                    })
+                    var html = '';
+                    data.forEach((ele) => {
+                        console.log(ele);
+                        var endTime = formatDates(ele.starttime + ele.classhours * 60 * 60 * 1000) // 上课时间
+                        // 有测评有学案
+                        if (ele.classnote && ele.assessment) {
+                            html += `
+                            <div class="studyReport_box">
+                                <div class="title">
+                                    <span>${formatDate(ele.starttime)}</span>
+                                </div>
+                                <div class="cont">
+                                <ul>
+                                    <li><img src="./images/02.png" alt="上课时间"><span>上课时间：${formatDates(ele.starttime)}~${endTime}</span></li>
+                                    <li><img src="./images/person.png" alt="个人信息"><span>授课老师：${ele.teacher}老师</span></li>
+                                </ul>
+                                <div class="btn">
+                                    <div class="btn_left" data-classnote="${ele.classnote}">
+                                        <img src="./images/study.png" alt="学习报告"><span>学习报告</span>
+                                    </div>
+                                    <div class="btn_right" data-assessment="${ele.assessment}">
+                                        <img src="./images/study.png" alt="阶段测评报告"><span>阶段测评报告</span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>`;
+                        } else if (ele.classnote) { // 有学案按钮   
+                            html += `
+                            <div class="studyReport_box">
+                                <div class="title">
+                                    <span>${formatDate(ele.starttime)}</span>
+                                </div>
+                                <div class="cont">
+                                    <ul>
+                                        <li><img src="./images/02.png" alt="上课时间"><span>上课时间：${formatDates(ele.starttime)}~${endTime}</span></li>
+                                        <li><img src="./images/person.png" alt="个人信息"><span>授课老师：${ele.teacher}老师</span></li>
+                                    </ul>
+                                    <div class="btn">
+                                        <div class="btn_left" data-classnote="${ele.classnote}">
+                                            <img src="./images/study.png" alt="学习报告"><span>学习报告</span>
+                                        </div>
+                                        <div class="btn_right" style="display:none">
+                                            <img src="./images/study.png" alt="阶段测评报告"><span>阶段测评报告</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        } else if (ele.assessment) { // 有测评按钮
+                            html += `
+                            <div class="studyReport_box">
+                                <div class="title">
+                                    <span>${formatDate(ele.starttime)}</span>
+                                </div>
+                                <div class="cont">
+                                    <ul>
+                                        <li><img src="./images/02.png" alt="上课时间"><span>上课时间：${formatDates(ele.starttime)}~${endTime}</span></li>
+                                        <li><img src="./images/person.png" alt="个人信息"><span>授课老师：${ele.teacher}老师</span></li>
+                                    </ul>
+                                    <div class="btn">
+                                        <div class="btn_left" style="display:none">
+                                            <img src="./images/study.png" alt="学习报告"><span>学习报告</span>
+                                        </div>
+                                        <div class="btn_right" data-assessment="${ele.assessment}">
+                                            <img src="./images/study.png" alt="阶段测评报告"><span>阶段测评报告</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        } else { // 无学案 无测评按钮
+                            html += `
+                            <div class="studyReport_box">
+                                <div class="title">
+                                    <span>${formatDate(ele.starttime)}</span>
+                                </div>
+                                <div class="cont">
+                                    <ul>
+                                        <li><img src="./images/02.png" alt="上课时间"><span>上课时间：${formatDates(ele.starttime)}~${endTime}</span></li>
+                                        <li><img src="./images/person.png" alt="个人信息"><span>授课老师：${ele.teacher}老师</span></li>
+                                    </ul>
+                                </div>
+                            </div>`;
+                        }
+                    })
+                    $('#main').append(html);
+                }
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        })
+
+        // 点击学习报告
+        $('#main').on('click', '.btn_left', function (e) {
+            var classnote = '';
+            if ($(this).parent().is('.btn_left')) {
+                classnote = $(this).parent().attr('data-classnote');
+            } else {
+                classnote = $(this).attr('data-classnote');
+            }
+            window.open(classnote, '_self');
+        })
+
+        // 点击测评报告按钮
+        $('#main').on('click', '.btn_right', function (e) {
+            var assessment = '';
+            if ($(this).parent().is('.btn_left')) {
+                assessment = $(this).parent().attr('data-assessment');
+            } else {
+                assessment = $(this).attr('data-assessment');
+            }
+            window.open(assessment, '_self');
+        })
+    })
+</script>
+
+</html>
